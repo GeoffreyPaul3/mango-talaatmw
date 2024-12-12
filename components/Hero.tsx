@@ -1,62 +1,75 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { motion, useAnimation } from 'framer-motion'
-import Link from 'next/link'
-import { BananaIcon as Fruit, Carrot, Apple, CitrusIcon as Lemon, Banana } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import Link from 'next/link';
+import { BananaIcon as Fruit, Carrot, Apple, CitrusIcon as Lemon, Banana } from 'lucide-react';
 
-const fruitIcons = [Fruit, Carrot, Apple, Lemon, Banana]
+const fruitIcons = [Fruit, Carrot, Apple, Lemon, Banana];
 
 const Hero = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const bubbleControls = useAnimation()
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const bubbleControls = useAnimation();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    handleResize(); // Set initial values
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
 
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   useEffect(() => {
     bubbleControls.start({
       x: mousePosition.x,
       y: mousePosition.y,
-      transition: { type: 'spring', damping: 3 }
-    })
-  }, [mousePosition, bubbleControls])
+      transition: { type: 'spring', damping: 3 },
+    });
+  }, [mousePosition, bubbleControls]);
 
   return (
     <section className="relative h-screen overflow-hidden bg-gradient-to-br from-orange-400 to-yellow-200 dark:from-orange-700 dark:to-yellow-900">
       {/* Animated fruit background */}
-      {[...Array(20)].map((_, i) => {
-        const Icon = fruitIcons[i % fruitIcons.length]
-        return (
-          <motion.div
-            key={i}
-            className="absolute text-white/20 dark:text-gray-700/20"
-            initial={{ 
-              x: Math.random() * window.innerWidth, 
-              y: -50,
-              rotate: 0,
-              scale: Math.random() * 0.5 + 0.5
-            }}
-            animate={{
-              y: window.innerHeight + 50,
-              rotate: 360,
-              transition: {
-                duration: Math.random() * 10 + 20,
-                repeat: Infinity,
-                ease: 'linear'
-              }
-            }}
-          >
-            <Icon size={48} />
-          </motion.div>
-        )
-      })}
+      {windowSize.width > 0 &&
+        [...Array(20)].map((_, i) => {
+          const Icon = fruitIcons[i % fruitIcons.length];
+          return (
+            <motion.div
+              key={i}
+              className="absolute text-white/20 dark:text-gray-700/20"
+              initial={{ 
+                x: Math.random() * windowSize.width, 
+                y: -50,
+                rotate: 0,
+                scale: Math.random() * 0.5 + 0.5,
+              }}
+              animate={{
+                y: windowSize.height + 50,
+                rotate: 360,
+                transition: {
+                  duration: Math.random() * 10 + 20,
+                  repeat: Infinity,
+                  ease: 'linear',
+                },
+              }}
+            >
+              <Icon size={48} />
+            </motion.div>
+          );
+        })}
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
@@ -104,13 +117,13 @@ const Hero = () => {
               "M0,320L1440,320L1440,320L0,320Z",
               "M0,320L1440,320L1440,280L0,320Z",
               "M0,320L1440,320L1440,300L0,280Z",
-              "M0,320L1440,320L1440,320L0,320Z"
-            ]
+              "M0,320L1440,320L1440,320L0,320Z",
+            ],
           }}
           transition={{
             repeat: Infinity,
             duration: 5,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       </svg>
@@ -122,8 +135,7 @@ const Hero = () => {
         animate={bubbleControls}
       />
     </section>
-  )
-}
+  );
+};
 
-export default Hero
-
+export default Hero;
