@@ -124,7 +124,7 @@ const Contact = () => {
                 transition={{ duration: 0.5 }}
                 className="mt-4 text-green-500 font-semibold"
               >
-                Thank you for your message! We'll get back to you soon.
+                Thank you for your message! We&apos;ll get back to you soon.
               </motion.p>
             )}
           </motion.div>
